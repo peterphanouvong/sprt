@@ -29,7 +29,7 @@ __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Post.prototype, "desciption", void 0);
+], Post.prototype, "description", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),

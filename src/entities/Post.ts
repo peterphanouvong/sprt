@@ -23,7 +23,7 @@ export class Post extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  desciption!: string;
+  description!: string;
 
   @Field()
   @Column()
