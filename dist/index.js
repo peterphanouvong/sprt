@@ -18,8 +18,9 @@ const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
 const Post_1 = require("./entities/Post");
 const User_1 = require("./entities/User");
+const path_1 = __importDefault(require("path"));
 const main = async () => {
-    const conn = typeorm_1.createConnection({
+    const conn = await typeorm_1.createConnection({
         type: "postgres",
         database: "sprt",
         username: "peterphanouvong",
@@ -27,7 +28,9 @@ const main = async () => {
         logging: true,
         synchronize: true,
         entities: [Post_1.Post, User_1.User],
+        migrations: [path_1.default.join(__dirname, "./migrations/*")],
     });
+    conn.runMigrations();
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redis = new ioredis_1.default();

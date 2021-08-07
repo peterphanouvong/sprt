@@ -14,9 +14,10 @@ import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import path from "path";
 
 const main = async () => {
-  const conn = createConnection({
+  const conn = await createConnection({
     type: "postgres",
     database: "sprt",
     username: "peterphanouvong",
@@ -24,9 +25,10 @@ const main = async () => {
     logging: true,
     synchronize: true,
     entities: [Post, User],
+    migrations: [path.join(__dirname, "./migrations/*")],
   });
 
-  // conn;
+  conn.runMigrations();
 
   const app = express();
 
