@@ -115,6 +115,16 @@ export class PostResolver {
     @Arg("id") id: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
+    const post = await Post.findOne(id);
+
+    if (!post) {
+      return false;
+    }
+
+    if (post.creatorId != req.session.userId) {
+      throw new Error("not authorized");
+    }
+
     await Post.delete({ id, creatorId: req.session.userId });
     return true;
   }
