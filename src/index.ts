@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import express from "express";
-import Redis from "ioredis";
+// import Redis from "ioredis";
+import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
@@ -30,10 +31,12 @@ const main = async () => {
 
   conn.runMigrations();
 
+  // Post.delete({});
+
   const app = express();
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redisClient = redis.createClient();
 
   app.use(
     cors({
@@ -46,7 +49,7 @@ const main = async () => {
     session({
       name: COOKIE_NAME,
       store: new RedisStore({
-        client: redis,
+        client: redisClient,
         disableTouch: true,
       }),
       saveUninitialized: false,

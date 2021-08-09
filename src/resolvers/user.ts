@@ -5,10 +5,12 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
@@ -16,12 +18,6 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 as uuid } from "uuid";
 import { getConnection } from "typeorm";
-
-declare module "express-session" {
-  interface Session {
-    userId: number;
-  }
-}
 
 @ObjectType()
 class FieldError {
@@ -41,8 +37,17 @@ class UserResponse {
   user?: User;
 }
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext): string {
+    if (req.session.userId === user.id) {
+      return user.email;
+    } else {
+      return "";
+    }
+  }
+
   @Mutation(() => UserResponse)
   async changePassword(
     @Arg("token") token: string,
@@ -122,6 +127,9 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
+    // req.session.reload((err) => console.log(err));
+    console.log(req.session);
+    console.log(req.sessionID);
     if (!req.session.userId) {
       return null;
     }

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
-const ioredis_1 = __importDefault(require("ioredis"));
+const redis_1 = __importDefault(require("redis"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
@@ -33,7 +33,7 @@ const main = async () => {
     conn.runMigrations();
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
-    const redis = new ioredis_1.default();
+    const redisClient = redis_1.default.createClient();
     app.use(cors_1.default({
         origin: ["http://localhost:3000", "https://studio.apollographql.com"],
         credentials: true,
@@ -41,7 +41,7 @@ const main = async () => {
     app.use(express_session_1.default({
         name: constants_1.COOKIE_NAME,
         store: new RedisStore({
-            client: redis,
+            client: redisClient,
             disableTouch: true,
         }),
         saveUninitialized: false,
@@ -59,7 +59,7 @@ const main = async () => {
             resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ req, res, redis }),
+        context: ({ req, res }) => ({ req, res, redis: redis_1.default }),
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({
