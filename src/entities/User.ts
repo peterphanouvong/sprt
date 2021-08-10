@@ -9,6 +9,11 @@ import {
   OneToMany,
 } from "typeorm";
 import { Post } from "./Post";
+import { Event } from "./Event";
+import { ClubFollower } from "./ClubFollower";
+import { ClubMember } from "./ClubMember";
+import { ClubAdmin } from "./ClubAdmin";
+import { EventAttendee } from "./EventAttendee";
 
 @ObjectType()
 @Entity()
@@ -31,6 +36,23 @@ export class User extends BaseEntity {
   @Field(() => Post)
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  // host
+  @Field(() => Event)
+  @OneToMany(() => Event, (event) => event.host)
+  events: Event[];
+
+  @OneToMany(() => ClubFollower, (cf) => cf.follower)
+  following_clubs: ClubFollower[];
+
+  @OneToMany(() => ClubMember, (cm) => cm.member)
+  club_member: ClubMember[];
+
+  @OneToMany(() => ClubAdmin, (ca) => ca.admin)
+  club_admin: ClubAdmin[];
+
+  @OneToMany(() => EventAttendee, (ca) => ca.attendee)
+  attending_events: EventAttendee[];
 
   @Field(() => String)
   @CreateDateColumn()

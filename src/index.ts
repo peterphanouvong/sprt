@@ -13,9 +13,20 @@ import { COOKIE_NAME, __prod__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
+import { EventResolver } from "./resolvers/event";
+
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 import path from "path";
+import { Event } from "./entities/Event";
+import { Club } from "./entities/Club";
+import { ClubEvent } from "./entities/ClubEvent";
+import { Sport } from "./entities/Sport";
+import { ClubSport } from "./entities/ClubSport";
+import { ClubFollower } from "./entities/ClubFollower";
+import { ClubMember } from "./entities/ClubMember";
+import { ClubAdmin } from "./entities/ClubAdmin";
+import { EventAttendee } from "./entities/EventAttendee";
 
 const main = async () => {
   const conn = await createConnection({
@@ -25,7 +36,19 @@ const main = async () => {
     password: "",
     logging: true,
     synchronize: true,
-    entities: [Post, User],
+    entities: [
+      Post,
+      User,
+      Event,
+      EventAttendee,
+      Club,
+      ClubEvent,
+      ClubFollower,
+      ClubMember,
+      ClubAdmin,
+      Sport,
+      ClubSport,
+    ],
     migrations: [path.join(__dirname, "./migrations/*")],
   });
 
@@ -66,7 +89,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, EventResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),

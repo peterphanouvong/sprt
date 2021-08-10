@@ -16,9 +16,19 @@ const constants_1 = require("./constants");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
+const event_1 = require("./resolvers/event");
 const Post_1 = require("./entities/Post");
 const User_1 = require("./entities/User");
 const path_1 = __importDefault(require("path"));
+const Event_1 = require("./entities/Event");
+const Club_1 = require("./entities/Club");
+const ClubEvent_1 = require("./entities/ClubEvent");
+const Sport_1 = require("./entities/Sport");
+const ClubSport_1 = require("./entities/ClubSport");
+const ClubFollower_1 = require("./entities/ClubFollower");
+const ClubMember_1 = require("./entities/ClubMember");
+const ClubAdmin_1 = require("./entities/ClubAdmin");
+const EventAttendee_1 = require("./entities/EventAttendee");
 const main = async () => {
     const conn = await typeorm_1.createConnection({
         type: "postgres",
@@ -27,7 +37,19 @@ const main = async () => {
         password: "",
         logging: true,
         synchronize: true,
-        entities: [Post_1.Post, User_1.User],
+        entities: [
+            Post_1.Post,
+            User_1.User,
+            Event_1.Event,
+            EventAttendee_1.EventAttendee,
+            Club_1.Club,
+            ClubEvent_1.ClubEvent,
+            ClubFollower_1.ClubFollower,
+            ClubMember_1.ClubMember,
+            ClubAdmin_1.ClubAdmin,
+            Sport_1.Sport,
+            ClubSport_1.ClubSport,
+        ],
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
     });
     conn.runMigrations();
@@ -56,7 +78,7 @@ const main = async () => {
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: await type_graphql_1.buildSchema({
-            resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
+            resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver, event_1.EventResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res, redis: redis_1.default }),
