@@ -24,6 +24,9 @@ class EventInput {
   @Field()
   location: string;
 
+  @Field()
+  datetime: string;
+
   // @Field()
   // hostId: number;
 }

@@ -32,6 +32,10 @@ export class Event extends BaseEntity {
   @Column()
   location!: string;
 
+  @Field(() => String)
+  @Column()
+  datetime!: Date;
+
   @Field()
   @Column()
   hostId: number;

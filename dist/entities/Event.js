@@ -38,6 +38,11 @@ __decorate([
     __metadata("design:type", String)
 ], Event.prototype, "location", void 0);
 __decorate([
+    type_graphql_1.Field(() => String),
+    typeorm_1.Column(),
+    __metadata("design:type", Date)
+], Event.prototype, "datetime", void 0);
+__decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
