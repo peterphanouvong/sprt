@@ -24,8 +24,8 @@ class EventInput {
   @Field()
   location: string;
 
-  @Field()
-  hostId: number;
+  // @Field()
+  // hostId: number;
 }
 
 // @ObjectType()
