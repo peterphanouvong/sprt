@@ -91,8 +91,14 @@ export class PostResolver {
   async createPost(
     @Ctx() { req }: MyContext,
     @Arg("input") input: PostInput
-  ): Promise<Post> {
-    return Post.create({ ...input, creatorId: req.session.userId }).save();
+  ): Promise<Post | undefined> {
+    const { id } = await Post.create({
+      ...input,
+      creatorId: req.session.userId,
+    }).save();
+
+    const post = await Post.findOne(id, { relations: ["creator"] });
+    return post;
   }
 
   @Mutation(() => Post, { nullable: true })

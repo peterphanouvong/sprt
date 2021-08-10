@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventResolver = void 0;
 const type_graphql_1 = require("type-graphql");
-const isAuth_1 = require("../middleware/isAuth");
 const Event_1 = require("../entities/Event");
 let EventInput = class EventInput {
 };
@@ -45,7 +44,9 @@ let EventResolver = class EventResolver {
         return Event_1.Event.findOne(id, { relations: ["host"] });
     }
     async createEvent({ req }, input) {
-        return Event_1.Event.create(Object.assign(Object.assign({}, input), { hostId: req.session.userId })).save();
+        const { id } = await Event_1.Event.create(Object.assign(Object.assign({}, input), { hostId: 1 })).save();
+        const event = await Event_1.Event.findOne(id, { relations: ["host"] });
+        return event;
     }
     async updateEvent(id, title) {
         const event = await Event_1.Event.findOne(id);
@@ -84,7 +85,6 @@ __decorate([
 ], EventResolver.prototype, "event", null);
 __decorate([
     type_graphql_1.Mutation(() => Event_1.Event),
-    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Ctx()),
     __param(1, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),

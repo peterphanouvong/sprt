@@ -78,7 +78,9 @@ let PostResolver = class PostResolver {
         return Post_1.Post.findOne(id, { relations: ["creator"] });
     }
     async createPost({ req }, input) {
-        return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
+        const { id } = await Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
+        const post = await Post_1.Post.findOne(id, { relations: ["creator"] });
+        return post;
     }
     async updatePost(id, title) {
         const post = await Post_1.Post.findOne(id);

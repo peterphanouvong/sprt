@@ -85,12 +85,14 @@ export class EventResolver {
   }
 
   @Mutation(() => Event)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async createEvent(
     @Ctx() { req }: MyContext,
     @Arg("input") input: EventInput
-  ): Promise<Event> {
-    return Event.create({ ...input, hostId: req.session.userId }).save();
+  ): Promise<Event | undefined> {
+    const { id } = await Event.create({ ...input, hostId: 1 }).save();
+    const event = await Event.findOne(id, { relations: ["host"] });
+    return event;
   }
 
   @Mutation(() => Event, { nullable: true })
