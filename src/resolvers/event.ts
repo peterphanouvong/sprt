@@ -44,7 +44,7 @@ export class EventResolver {
     // @Arg("limit", () => Int) limit: number,
     // @Arg("cursor", () => String, { nullable: true }) cursor: string | null
 
-    return Event.find({});
+    return Event.find({ relations: ["host"] });
 
     // const realLimit = Math.min(50, limit);
     // const realLimitPlusOne = realLimit + 1;
