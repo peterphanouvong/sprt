@@ -55,6 +55,7 @@ const main = async () => {
   conn.runMigrations();
 
   // Post.delete({});
+  // Event.delete({});
 
   const app = express();
 
