@@ -16,6 +16,8 @@ exports.EventResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const isAuth_1 = require("../middleware/isAuth");
 const Event_1 = require("../entities/Event");
+const EventAttendee_1 = require("../entities/EventAttendee");
+const User_1 = require("../entities/User");
 let EventInput = class EventInput {
 };
 __decorate([
@@ -39,7 +41,7 @@ EventInput = __decorate([
 ], EventInput);
 let EventResolver = class EventResolver {
     async events() {
-        return Event_1.Event.find({ relations: ["host"] });
+        return Event_1.Event.find({ relations: ["host", "attendees"] });
     }
     event(id) {
         return Event_1.Event.findOne(id, { relations: ["host"] });
@@ -69,6 +71,12 @@ let EventResolver = class EventResolver {
             throw new Error("not authorized");
         }
         await Event_1.Event.delete({ id, hostId: req.session.userId });
+        return true;
+    }
+    async addAttendee(id, userId) {
+        const event = await Event_1.Event.findOne(id);
+        const user = await User_1.User.findOne(userId);
+        await EventAttendee_1.EventAttendee.insert({ event, attendee: user });
         return true;
     }
 };
@@ -111,6 +119,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], EventResolver.prototype, "deleteEvent", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    __param(0, type_graphql_1.Arg("id")),
+    __param(1, type_graphql_1.Arg("userId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], EventResolver.prototype, "addAttendee", null);
 EventResolver = __decorate([
     type_graphql_1.Resolver(Event_1.Event)
 ], EventResolver);

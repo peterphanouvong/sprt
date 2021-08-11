@@ -12,6 +12,8 @@ import {
 import { MyContext } from "src/types";
 import { isAuth } from "../middleware/isAuth";
 import { Event } from "../entities/Event";
+import { EventAttendee } from "../entities/EventAttendee";
+import { User } from "../entities/User";
 
 @InputType()
 class EventInput {
@@ -47,7 +49,7 @@ export class EventResolver {
     // @Arg("limit", () => Int) limit: number,
     // @Arg("cursor", () => String, { nullable: true }) cursor: string | null
 
-    return Event.find({ relations: ["host"] });
+    return Event.find({ relations: ["host", "attendees"] });
 
     // const realLimit = Math.min(50, limit);
     // const realLimitPlusOne = realLimit + 1;
@@ -133,6 +135,25 @@ export class EventResolver {
     }
 
     await Event.delete({ id, hostId: req.session.userId });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async addAttendee(
+    @Arg("id") id: number,
+    @Arg("userId") userId: number
+  ): Promise<Boolean> {
+    // find the event
+    const event = await Event.findOne(id);
+
+    // find the user
+    const user = await User.findOne(userId);
+
+    // create eventAttendee(eventId, userId)
+    await EventAttendee.insert({ event, attendee: user });
+
+    // add ea to eventConn & userConn\
+
     return true;
   }
 }

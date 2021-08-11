@@ -9,12 +9,12 @@ export class EventAttendee extends BaseEntity {
   @PrimaryColumn()
   eventId: number;
 
-  @ManyToOne(() => Event, (e) => e.attendees)
+  @ManyToOne(() => Event, (e) => e.eventAttendeeConn)
   event: Event;
 
   @PrimaryColumn()
   attendeeId: number;
 
-  @ManyToOne(() => User, (s) => s.attending_events)
+  @ManyToOne(() => User, (s) => s.eventAttendeeConn)
   attendee: User;
 }
