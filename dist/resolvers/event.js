@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventResolver = void 0;
 const type_graphql_1 = require("type-graphql");
+const isAuth_1 = require("../middleware/isAuth");
 const Event_1 = require("../entities/Event");
 let EventInput = class EventInput {
 };
@@ -44,19 +45,20 @@ let EventResolver = class EventResolver {
         return Event_1.Event.findOne(id, { relations: ["host"] });
     }
     async createEvent({ req }, input) {
-        const { id } = await Event_1.Event.create(Object.assign(Object.assign({}, input), { hostId: 1 })).save();
+        const { id } = await Event_1.Event.create(Object.assign(Object.assign({}, input), { hostId: req.session.userId })).save();
         const event = await Event_1.Event.findOne(id, { relations: ["host"] });
         return event;
     }
-    async updateEvent(id, title) {
+    async updateEvent({ req }, id, input) {
         const event = await Event_1.Event.findOne(id);
         if (!event) {
             return null;
         }
-        if (typeof title !== "undefined") {
-            await Event_1.Event.update({ id }, { title });
+        if (req.session.userId !== event.hostId) {
+            return null;
         }
-        return event;
+        await Event_1.Event.update(id, Object.assign({}, input));
+        return Event_1.Event.findOne(id, { relations: ["host"] });
     }
     async deleteEvent(id, { req }) {
         const event = await Event_1.Event.findOne(id);
@@ -85,6 +87,7 @@ __decorate([
 ], EventResolver.prototype, "event", null);
 __decorate([
     type_graphql_1.Mutation(() => Event_1.Event),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Ctx()),
     __param(1, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),
@@ -93,10 +96,11 @@ __decorate([
 ], EventResolver.prototype, "createEvent", null);
 __decorate([
     type_graphql_1.Mutation(() => Event_1.Event, { nullable: true }),
-    __param(0, type_graphql_1.Arg("id")),
-    __param(1, type_graphql_1.Arg("title")),
+    __param(0, type_graphql_1.Ctx()),
+    __param(1, type_graphql_1.Arg("id")),
+    __param(2, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Object, Number, EventInput]),
     __metadata("design:returntype", Promise)
 ], EventResolver.prototype, "updateEvent", null);
 __decorate([
