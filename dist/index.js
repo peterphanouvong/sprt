@@ -29,12 +29,15 @@ const ClubFollower_1 = require("./entities/ClubFollower");
 const ClubMember_1 = require("./entities/ClubMember");
 const ClubAdmin_1 = require("./entities/ClubAdmin");
 const EventAttendee_1 = require("./entities/EventAttendee");
+const club_1 = require("./resolvers/club");
 const main = async () => {
     const conn = await typeorm_1.createConnection({
         type: "postgres",
+        host: "localhost",
+        port: 5432,
         database: "sprt",
-        username: "peterphanouvong",
-        password: "",
+        username: "postgres",
+        password: "postgres",
         logging: true,
         synchronize: true,
         entities: [
@@ -52,7 +55,6 @@ const main = async () => {
         ],
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
     });
-    conn.runMigrations();
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redisClient = redis_1.default.createClient();
@@ -78,7 +80,7 @@ const main = async () => {
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: await type_graphql_1.buildSchema({
-            resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver, event_1.EventResolver],
+            resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver, event_1.EventResolver, club_1.ClubResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res, redis: redis_1.default }),

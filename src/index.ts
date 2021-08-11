@@ -27,13 +27,16 @@ import { ClubFollower } from "./entities/ClubFollower";
 import { ClubMember } from "./entities/ClubMember";
 import { ClubAdmin } from "./entities/ClubAdmin";
 import { EventAttendee } from "./entities/EventAttendee";
+import { ClubResolver } from "./resolvers/club";
 
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
+    host: "localhost",
+    port: 5432,
     database: "sprt",
-    username: "peterphanouvong",
-    password: "",
+    username: "postgres",
+    password: "postgres",
     logging: true,
     synchronize: true,
     entities: [
@@ -52,7 +55,7 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
   });
 
-  conn.runMigrations();
+//   conn.runMigrations();
 
   // Post.delete({});
   // Event.delete({});
@@ -90,7 +93,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver, EventResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, EventResolver, ClubResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),
