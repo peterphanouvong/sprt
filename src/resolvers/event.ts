@@ -85,29 +85,36 @@ export class EventResolver {
   }
 
   @Mutation(() => Event)
-  // @UseMiddleware(isAuth)
+  @UseMiddleware(isAuth)
   async createEvent(
     @Ctx() { req }: MyContext,
     @Arg("input") input: EventInput
   ): Promise<Event | undefined> {
-    const { id } = await Event.create({ ...input, hostId: 1 }).save();
+    const { id } = await Event.create({
+      ...input,
+      hostId: req.session.userId,
+    }).save();
     const event = await Event.findOne(id, { relations: ["host"] });
     return event;
   }
 
   @Mutation(() => Event, { nullable: true })
   async updateEvent(
+    @Ctx() { req }: MyContext,
     @Arg("id") id: number,
-    @Arg("title") title: string
-  ): Promise<Event | null> {
+    @Arg("input") input: EventInput
+  ): Promise<Event | null | undefined> {
     const event = await Event.findOne(id);
     if (!event) {
       return null;
     }
-    if (typeof title !== "undefined") {
-      await Event.update({ id }, { title });
+
+    if (req.session.userId !== event.hostId) {
+      return null;
     }
-    return event;
+
+    await Event.update(id, { ...input });
+    return Event.findOne(id, { relations: ["host"] });
   }
 
   @Mutation(() => Boolean)
